@@ -205,41 +205,57 @@ int L1List<T>::insert(int i,T&&a){
 
 template <class T>
 int L1List<T>::remove(int i){
-    L1Item<T> * current = this->_pHead;
-    L1Item<T> * preCurrent;
-    int idx = 0;
-    while(current){
-        if(i == idx){
-            break;
+    if(i == 0){
+        L1Item<T> * current = this->_pHead;
+        this->_size--;
+        this->_pHead = this->_pHead->pNext;
+        delete current;
+    }else{
+        L1Item<T> * current = this->_pHead;
+        L1Item<T> * preCurrent;
+        this->_size--;
+        int idx = 0;
+        while(current){
+            if(i == idx){
+                break;
+            }
+            preCurrent = current;
+            current = current->pNext;
+            idx++;
         }
-        current = current->pNext;
-        preCurrent = current;
-        idx++;
-    }
-    if(current){
-        preCurrent->pNext = current->pNext;
-        current = NULL;
+        if(current){
+            preCurrent->pNext = current->pNext;
+            current = NULL;
+        }
     }
     return i;
 }
 
 template <class T>
 int L1List<T>::remove(T& a, std::function<bool (T&, T&)> eqCmp){
-    L1Item<T> * current = this->_pHead;
-    L1Item<T> * preCurrent;
-    while(current){
-        if(eqCmp(a, current->data)){
-            break;
+    if(eqCmp(a, this->_pHead->data)){
+        L1Item<T> * current = this->_pHead;
+        this->_pHead = this->_pHead->pNext;
+        this->_size--;
+        delete current;
+    }else{
+        L1Item<T> * current = this->_pHead;
+        L1Item<T> * preCurrent;
+        this->_size--;
+        while(current){
+            if(eqCmp(a, current->data)){
+                break;
+            }
+            preCurrent = current;
+            current = current->pNext;
         }
-        current = current->pNext;
-        preCurrent = current;
+        if(current){
+            preCurrent->pNext = current->pNext;
+            current = NULL;
+        }
     }
-    if(current){
-        preCurrent->pNext = current->pNext;
-        current = NULL;
-    }
-    return 0;
-}
+        return 0;
+}   
 
 template <class T>
 T& L1List<T>::at(int i){
