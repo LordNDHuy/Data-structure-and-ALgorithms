@@ -1,3 +1,4 @@
+#define cusCmp 
 #include <iostream>
 #ifndef AVLTree
 template <class T>
@@ -13,7 +14,12 @@ struct AVLNode {
     //bFactor -1 = lefthigh, 0 = balance, 1 = righthight
 #endif
 };
-
+template <class T>
+int eqCmp(T & a, T & b){
+    if(a > b) return 1;
+    else if(a < b) return -1;
+    else return 0;
+}
 template <class T>
 class AVLTree {
     AVLNode<T> *_pRoot;
@@ -171,9 +177,21 @@ bool AVLTree<T>::find(AVLNode<T> *pR, T& key, T* &ret){
     }
     AVLNode<T> * ptr = pR;
     while(ptr){
-        if(key < ptr->_data){
+        if(
+            #ifdef cusCmp
+                eqCmp(key,pR->_data) < 0
+            #else
+                key < pR->_data
+            #endif
+        ){
             ptr = ptr->_pLeft;
-        }else if(key > ptr->_data){
+        }else if(
+            #ifdef cusCmp
+                eqCmp(key,pR->_data) > 0
+            #else
+                key > pR->_data
+            #endif
+        ){
             ptr = ptr->_pRight;
         }else{
             ret = ptr->_data;
@@ -190,7 +208,13 @@ bool AVLTree<T>::insert(AVLNode<T>* &pR, T& key){
         return true;
     }
     bool taller;
-    if(key < pR->_data){
+    if(
+        #ifdef cusCmp
+            eqCmp(key,pR->_data) < 0
+        #else
+            key < pR->_data
+        #endif
+    ){
         taller = insert(pR->_pLeft, key);
         if(taller){
             if(pR->_bFactor == -1){
@@ -245,7 +269,13 @@ bool AVLTree<T>::remove(AVLNode<T>* &pR, T& key){
         return false;
     }
     bool taller;
-    if(key < pR->_data){
+    if(
+        #ifdef cusCmp
+            eqCmp(key,pR->_data) < 0
+        #else
+            key < pR->_data
+        #endif
+    ){
         taller = remove(pR->_pLeft, key);
         if(taller){
             if(pR->_bFactor == 1){
@@ -255,7 +285,13 @@ bool AVLTree<T>::remove(AVLNode<T>* &pR, T& key){
                 taller = false;
             }else pR->_bFactor = 0;
         }
-    }else if(key > pR->_data){
+    }else if(
+            #ifdef cusCmp
+                eqCmp(key,pR->_data) > 0
+            #else
+                key > pR->_data
+            #endif
+    ){
         taller = remove(pR->_pRight, key);
         if(taller){
             if(pR->_bFactor == -1){
